@@ -1,5 +1,5 @@
 shinyUI(pageWithSidebar(
-  headerPanel("Interactive Volcano Plot Viewer"),
+  headerPanel("Interactive Volcano Plot"),
   sidebarPanel(
     fileInput('file1', 'Choose File',
               accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
