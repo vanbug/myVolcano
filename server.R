@@ -33,6 +33,7 @@ shinyServer(function(input, output) {
 	  condB = input$condB,
 	  label.size = input$labelsize,
 	  threshold = input$threshold,
+    geneLabel = input$geneLabel,
 #      pr.threshold = rescale(input$threshold, to=c(0.93,1), from = c(0,1)),
       point.size.range = input$range,
       xlabel = input$xlabel,
@@ -76,20 +77,6 @@ output$volcano <- renderPlot({
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # creating table view
   output$contents <- renderTable({
     # input$file1 will be NULL initially. After the user selects and uploads a 
@@ -105,7 +92,60 @@ output$volcano <- renderPlot({
   output$histogram <- renderPlot({
     dat <- input.data();
     if(is.null(dat)) return(NULL);
-    hist(x=dat[,3],main="Histogram of unadjusted p-values", xlab = "p-value");
+    hist(x=dat[,10],main="Histogram of unadjusted p-values", xlab = "p-value");
 	})
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# downloadHandler() takes two arguments, both functions.
+  # The content function is passed a filename as an argument, and
+  #   it should write out data to that filename.
+  output$downloadData <- downloadHandler(
+ 
+    # This function returns a string which tells the client
+    # browser what name to use when saving the file.
+    filename = function() {
+      paste(input$dataset, input$filetype, sep = ".")
+    },
+ 
+    # This function should write data to a file given to it by
+    # the argument 'file'.
+    content = function(file) {
+      sep <- switch(input$filetype, "csv" = ",", "tsv" = "\t")
+
+      dat <- input.data();
+
+# setting the formal arguments of a function
+  export.defaults <- formals(exportDat);
+
+  export.args.in  <- modifyList2(export.defaults, volcano.args())
+  formals(exportDat) <- export.args.in;
+  
+  # data switching based on the user's input
+  manualDat=exportDat(dat=dat,switch="manual")
+  threshDat=exportDat(dat=dat,switch="thresh")
+
+    # Fetch the appropriate data object, depending on the value
+    # of input$dataset.
+    dataWrite <- switch(input$dataset,
+          "Manual Genes" = manualDat,
+          "Threshold Genes" = threshDat
+          )
+
+      # Write to a file specified by the 'file' argument
+      write.table(dataWrite, file, sep = sep,row.names = FALSE)
+    }
+  )
 })
