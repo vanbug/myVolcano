@@ -23,9 +23,10 @@ shinyServer(function(input, output) {
 # arguments coming from the user's input thru ui.R
   volcano.args <- reactive({
 
-#    colour.scheme <- unlist(strsplit(input$colour, ';'))
-#    colour.scheme <- gsub("^\\s+|\\s+$", "", colour.scheme)
- #   use.colour <- ifelse(colour.scheme %in% colours(), colour.scheme, 'black');
+    colour.scheme <- unlist(strsplit(input$colour, ';'))
+    colour.scheme <- gsub("^\\s+|\\s+$", "", colour.scheme)
+    # if the input colors are not available in the colours present by default in R, return Black, and the result is sent as an argument below
+    use.colour <- ifelse(colour.scheme %in% colours(), colour.scheme, 'black');
 
     list(
     #  xybias = input$xybias,
@@ -33,12 +34,14 @@ shinyServer(function(input, output) {
 	  condB = input$condB,
 	  label.size = input$labelsize,
 	  threshold = input$threshold,
+    xlim = input$xlim,
+    ylim = input$ylim,
     geneLabel = input$geneLabel,
 #      pr.threshold = rescale(input$threshold, to=c(0.93,1), from = c(0,1)),
       point.size.range = input$range,
       xlabel = input$xlabel,
       ylabel = parse(text=strsplit(input$ylabel, ',')),
-      #scheme = use.colour,
+      scheme = use.colour,
       draw.signif.line = input$signif
      # add.jitter = input$jitter,
       #jitter.factor = input$jitter.factor
@@ -67,7 +70,7 @@ output$volcano <- renderPlot({
     
     #print(p)
     
-  }, height=700,width=800)
+  }, height=800,width=1000,res=100)
 
 
 
