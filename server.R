@@ -123,7 +123,7 @@ output$volcano <- renderPlot({
     # This function should write data to a file given to it by
     # the argument 'file'.
     content = function(file) {
-      sep <- switch(input$filetype, "csv" = ",", "tsv" = "\t")
+      sep <- switch(input$filetype, "tsv" = "\t", "csv" = ",")
 
       dat <- input.data();
 
@@ -145,7 +145,7 @@ output$volcano <- renderPlot({
           )
 
       # Write to a file specified by the 'file' argument
-      write.table(dataWrite, file, sep = sep,row.names = FALSE)
+      write.table(dataWrite, file, sep = sep,row.names = FALSE,quote=FALSE)
     }
   )
 })
